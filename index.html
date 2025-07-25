@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Glow Animated Cartoon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0c0a09;
+        }
+        .font-bangers {
+            font-family: 'Bangers', cursive;
+        }
+        #stage {
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            background: #1a1a2e;
+            border: 4px solid #a855f7;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 15px #a855f7, 0 0 30px #a855f7, inset 0 0 10px #1f2937;
+            background-image: radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+                              radial-gradient(circle at 80% 70%, rgba(74, 222, 128, 0.1) 0%, transparent 40%);
+        }
+        .character {
+            position: absolute;
+            bottom: 20px;
+            width: 100px; /* Adjusted for new SVG size */
+            height: 200px; /* Adjusted for new SVG size */
+            transition: all 0.5s ease-in-out;
+        }
+        .main-char {
+            left: 30%;
+            z-index: 10;
+            filter: drop-shadow(0 0 8px #4ade80);
+        }
+        .other-char {
+            left: 60%;
+            z-index: 5;
+            filter: drop-shadow(0 0 8px #f472b6);
+        }
+
+        /* SVG Character Styles */
+        .man-svg, .woman-svg {
+            width: 100px;
+            height: 200px;
+        }
+        .man-svg .clothing { fill: #4ade80; }
+        .man-svg .skin { fill: #fde68a; }
+        .man-svg .hair { fill: #4b5563; }
+        .woman-svg .clothing { fill: #f472b6; }
+        .woman-svg .skin { fill: #fde68a; }
+        .woman-svg .hair { fill: #78350f; }
+        .eye { fill: #111827; }
+
+        /* Neon Text */
+        .neon-text-purple {
+            color: #e9d5ff;
+            text-shadow: 0 0 5px #a855f7, 0 0 10px #a855f7, 0 0 15px #c084fc;
+        }
+        .neon-text-green {
+            color: #dcfce7;
+            font-weight: bold;
+            text-shadow: 0 0 5px #4ade80, 0 0 10px #4ade80, 0 0 15px #86efac;
+        }
+
+        /* Animations */
+        @keyframes walk-out {
+            from { transform: translateX(0); }
+            to { transform: translateX(200px) scale(0.5); opacity: 0; }
+        }
+        @keyframes new-char-in {
+            from { transform: translateY(-450px) rotate(360deg); }
+            to { transform: translateY(0) rotate(0deg); }
+        }
+        @keyframes chop-anim {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(45deg); }
+        }
+        @keyframes heart-break {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: translateY(100px) rotate(90deg) scale(1.5); }
+        }
+        @keyframes eye-roll-anim {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes stars-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes romantic-glow {
+            0%, 100% { filter: drop-shadow(0 0 15px #fca5a5); }
+            50% { filter: drop-shadow(0 0 25px #ef4444); }
+        }
+
+        .walk-out { animation: walk-out 0.8s ease-in forwards; }
+        .new-char-in { animation: new-char-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+        .eye-roll .eye { animation: eye-roll-anim 0.3s linear infinite; }
+        .romantic-glow { animation: romantic-glow 1.5s ease-in-out infinite; }
+
+        #scissors, #heart, #stars, #confetti-cannon, #bed {
+            position: absolute;
+            display: none;
+        }
+        #scissors {
+            width: 100px; height: 100px; top: 150px; left: calc(50% - 50px);
+            z-index: 20; animation: chop-anim 0.3s linear 3; filter: drop-shadow(0 0 5px #fff);
+        }
+        #heart {
+            width: 50px; height: 50px; top: 180px; left: calc(50% - 25px);
+            z-index: 15; filter: drop-shadow(0 0 10px red);
+        }
+        #heart.broken { animation: heart-break 0.5s ease-in forwards; }
+        #stars {
+            top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem;
+            animation: stars-spin 2s linear infinite; text-shadow: 0 0 10px #f59e0b;
+        }
+        #confetti-cannon { bottom: 20px; left: 10px; font-size: 5rem; transform: rotate(20deg); }
+        #bed {
+            width: 400px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            filter: drop-shadow(0 0 15px #a855f7);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #lyrics-box {
+            background: rgba(12, 10, 9, 0.8);
+            border: 2px solid #4ade80;
+            box-shadow: 0 0 10px #4ade80;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.25rem;
+            line-height: 1.8rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-stone-950 text-white flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-3xl mx-auto text-center mb-6">
+        <h1 class="text-5xl md:text-6xl font-bangers tracking-wider neon-text-purple">Moving On: The Cartoon</h1>
+        <p class="text-gray-400 mt-2">The Neon Glow Edition</p>
+    </div>
+
+    <div id="stage">
+        <!-- New SVG Characters -->
+        <div id="main-char" class="character main-char">
+            <svg class="man-svg" viewBox="0 0 100 200">
+                <g class="hair"><rect x="20" y="0" width="60" height="30" rx="15"/></g>
+                <g class="skin">
+                    <rect x="25" y="20" width="50" height="50" rx="25" class="head"/>
+                    <circle cx="40" cy="40" r="4" class="eye"/>
+                    <circle cx="60" cy="40" r="4" class="eye"/>
+                </g>
+                <g class="clothing"><rect x="10" y="70" width="80" height="100" rx="10"/></g>
+            </svg>
+        </div>
+        <div id="other-char" class="character other-char" style="display: none;">
+             <svg class="woman-svg" viewBox="0 0 100 200">
+                <g class="hair"><path d="M 10,30 C 10,0 90,0 90,30 L 90,80 C 90,120 70,110 50,130 C 30,110 10,120 10,80 Z"/></g>
+                <g class="skin">
+                    <rect x="25" y="20" width="50" height="50" rx="25" class="head"/>
+                    <circle cx="40" cy="40" r="4" class="eye"/>
+                    <circle cx="60" cy="40" r="4" class="eye"/>
+                </g>
+                <g class="clothing"><path d="M 20,70 L 80,70 L 90,170 L 10,170 Z"/></g>
+            </svg>
+        </div>
+
+        <!-- Props -->
+        <svg id="bed" viewBox="0 0 400 150">
+            <path d="M 20 130 C 20 150, 380 150, 380 130 L 380 100 L 20 100 Z" fill="#4c1d95"/>
+            <rect x="10" y="50" width="380" height="50" rx="10" fill="#5b21b6"/>
+            <rect x="30" y="20" width="80" height="30" rx="10" fill="#7c3aed"/>
+        </svg>
+
+        <svg id="scissors" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="25" cy="20" r="15" fill="none" stroke="#a78bfa" stroke-width="5"/><circle cx="75" cy="20" r="15" fill="none" stroke="#a78bfa" stroke-width="5"/><line x1="35" y1="30" x2="80" y2="90" stroke="#e0e7ff" stroke-width="7" stroke-linecap="round"/><line x1="65" y1="30" x2="20" y2="90" stroke="#e0e7ff" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <svg id="heart" viewBox="0 0 24 24" fill="#ef4444" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <div id="stars">✨🌟✨</div>
+        <div id="confetti-cannon">🔫</div>
+    </div>
+
+    <div id="lyrics-box" class="w-full max-w-3xl mx-auto mt-6">
+        <p id="lyrics-text">Press "Play Animation" to begin!</p>
+    </div>
+
+    <button id="play-btn" class="mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out text-xl" style="box-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7;">
+        Play Animation
+    </button>
+
+    <script>
+        // DOM Elements
+        const playBtn = document.getElementById('play-btn');
+        const mainChar = document.getElementById('main-char');
+        const otherChar = document.getElementById('other-char');
+        const scissors = document.getElementById('scissors');
+        const heart = document.getElementById('heart');
+        const stars = document.getElementById('stars');
+        const lyricsText = document.getElementById('lyrics-text');
+        const confettiCannon = document.getElementById('confetti-cannon');
+        const bed = document.getElementById('bed');
+
+        const timeline = [
+            { lyric: "Once you choose to leave me, it's a wrap...", duration: 2000, action: 'otherWalksOut' },
+            { lyric: "Chop-chop-chop, cut that connection off...", duration: 1500, action: 'chopHeart' },
+            { lyric: "I find a new friend, same day!", duration: 1500, action: 'newChar' },
+            { lyric: "Slide to the left, slide to the right!", duration: 2000, action: 'dance' },
+            { lyric: "I pull you close, turn you 'round...", duration: 2000, action: 'romanticScene' },
+            { lyric: "Her hips roll and oh my god don't stop...", duration: 2000, action: 'hipRoll' },
+            { lyric: "Eyes rollin'...", duration: 1500, action: 'eyesRoll' },
+            { lyric: "I'm catchin' glimpses of the future...", duration: 2000, action: 'futureGlimpse' },
+            { lyric: "We ain't done, let's relax and try again...", duration: 2000, action: 'relax' },
+            { lyric: "Delete ya contact, mute the flashbacks...", duration: 1500, action: 'deleteContact' },
+            { lyric: "We clicked! It was like an apocalypse of fun!", duration: 2000, action: 'sparksFly' },
+            { lyric: "Like a super soaker of confetti!", duration: 2000, action: 'confetti' },
+            { lyric: "THE END!", duration: 3000, action: 'end' }
+        ];
+
+        let currentStep = 0;
+        let isPlaying = false;
+
+        const actions = {
+            setup() {
+                otherChar.style.display = 'block';
+                otherChar.classList.remove('walk-out', 'new-char-in', 'romantic-glow', 'eye-roll');
+                mainChar.classList.remove('romantic-glow', 'eye-roll');
+                mainChar.style.left = '30%';
+                otherChar.style.left = '60%';
+                otherChar.style.opacity = 1;
+                stars.style.display = 'none';
+                confettiCannon.style.display = 'none';
+                bed.style.opacity = '0';
+                bed.style.display = 'none';
+                document.getElementById('stage').style.background = '#1a1a2e';
+            },
+            otherWalksOut() { otherChar.classList.add('walk-out'); },
+            chopHeart() {
+                scissors.style.display = 'block';
+                heart.style.display = 'block';
+                heart.classList.remove('broken');
+                setTimeout(() => heart.classList.add('broken'), 100);
+                setTimeout(() => scissors.style.display = 'none', 900);
+            },
+            newChar() {
+                otherChar.classList.remove('walk-out');
+                otherChar.classList.add('new-char-in');
+            },
+            dance() {
+                mainChar.style.transition = 'transform 0.5s ease-in-out';
+                mainChar.style.transform = 'translateX(-30px) rotate(-10deg)';
+                otherChar.style.transition = 'transform 0.5s ease-in-out';
+                otherChar.style.transform = 'translateX(30px) rotate(10deg)';
+                setTimeout(() => {
+                    mainChar.style.transform = 'translateX(30px) rotate(10deg)';
+                    otherChar.style.transform = 'translateX(-30px) rotate(-10deg)';
+                }, 500);
+                setTimeout(() => {
+                    mainChar.style.transform = 'translateX(0) rotate(0deg)';
+                    otherChar.style.transform = 'translateX(0) rotate(0deg)';
+                }, 1000);
+            },
+            romanticScene() {
+                bed.style.display = 'block';
+                setTimeout(() => bed.style.opacity = '1', 100);
+                mainChar.style.left = '40%';
+                otherChar.style.left = '50%';
+                mainChar.classList.add('romantic-glow');
+                otherChar.classList.add('romantic-glow');
+            },
+            hipRoll() {
+                otherChar.style.transition = 'transform 0.5s ease-in-out';
+                otherChar.style.transform = 'rotate(15deg)';
+                setTimeout(() => otherChar.style.transform = 'rotate(-15deg)', 500);
+                setTimeout(() => otherChar.style.transform = 'rotate(0deg)', 1000);
+            },
+            eyesRoll() {
+                mainChar.classList.add('eye-roll');
+                otherChar.classList.add('eye-roll');
+            },
+            futureGlimpse() {
+                mainChar.classList.remove('eye-roll');
+                otherChar.classList.remove('eye-roll');
+                document.getElementById('stage').style.background = 'radial-gradient(circle, #6d28d9, #1a1a2e)';
+            },
+            relax() {
+                bed.style.opacity = '0';
+                setTimeout(() => bed.style.display = 'none', 1000);
+                document.getElementById('stage').style.background = '#1a1a2e';
+                mainChar.classList.remove('romantic-glow');
+                otherChar.classList.remove('romantic-glow');
+                mainChar.style.left = '30%';
+                otherChar.style.left = '60%';
+            },
+            deleteContact() {
+                lyricsText.innerHTML = `<span class="neon-text-green">[CONTACT DELETED]</span>`;
+            },
+            sparksFly() {
+                stars.style.display = 'block';
+            },
+            confetti() {
+                stars.style.display = 'none';
+                confettiCannon.style.display = 'block';
+            },
+            end() {
+                playBtn.style.display = 'block';
+                playBtn.textContent = 'Play Again';
+                isPlaying = false;
+                currentStep = 0;
+            }
+        };
+
+        function runTimeline() {
+            if (currentStep >= timeline.length || !isPlaying) {
+                isPlaying = false;
+                playBtn.disabled = false;
+                return;
+            }
+            const step = timeline[currentStep];
+            if (step.action !== 'deleteContact') {
+                 lyricsText.innerHTML = `<span class="neon-text-green">${step.lyric}</span>`;
+            }
+            if (step.action && actions[step.action]) {
+                actions[step.action]();
+            }
+            currentStep++;
+            setTimeout(runTimeline, step.duration);
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) return;
+            isPlaying = true;
+            playBtn.style.display = 'none';
+            playBtn.disabled = true;
+            currentStep = 0;
+            actions.setup();
+            runTimeline();
+        });
+    </script>
+</body>
+</html>
